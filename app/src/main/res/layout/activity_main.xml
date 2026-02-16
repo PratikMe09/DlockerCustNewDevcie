@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:gravity="center_horizontal">
+
+    <!-- Title -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Main App - Device Owner Receiver"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="24dp" />
+
+    <!-- Status Display -->
+    <TextView
+        android:id="@+id/statusText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Checking status..."
+        android:textSize="16sp"
+        android:padding="16dp"
+        android:background="#F5F5F5"
+        android:layout_marginBottom="24dp"
+        android:gravity="center" />
+
+    <!-- Check Status Button -->
+    <Button
+        android:id="@+id/checkStatusBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Refresh Status"
+        android:textSize="16sp"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Test Policy Button -->
+    <Button
+        android:id="@+id/testPolicyBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Test Device Owner Features"
+        android:textSize="16sp"
+        android:enabled="false"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Remove Device Owner Button -->
+    <Button
+        android:id="@+id/removeOwnerBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Remove Device Owner"
+        android:textSize="16sp"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#F44336"
+        android:enabled="false" />
+
+    <!-- Instructions -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Instructions:\n\n1. First install and set Launcher App as Device Owner\n2. Run Launcher App and click 'Download and Install Main App'\n3. This app will be installed and receive Device Owner status\n4. Use 'Test Device Owner Features' to verify"
+        android:textSize="12sp"
+        android:layout_marginTop="32dp"
+        android:padding="8dp"
+        android:background="#E3F2FD" />
+
+</LinearLayout>
