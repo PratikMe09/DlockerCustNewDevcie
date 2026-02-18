@@ -1,8 +1,11 @@
 package com.d.locker.lock.services
 
-import android.content.Intent
 import android.util.Log
-import com.d.locker.lock.activities.LockActivity
+import com.d.locker.lock.utils.AudioPlayer
+import com.d.locker.lock.utils.LocationUtils
+import com.d.locker.lock.utils.LockManager
+import com.d.locker.lock.utils.NetworkManager
+import com.d.locker.lock.utils.WallpaperUtils
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
@@ -38,51 +41,55 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             Log.d(TAG, "╚════════════════════════════════════════════════════════")
 
             // Process commands
-            val command = remoteMessage.data["command"]
+            val command = remoteMessage.data["command"]?.uppercase()
             
-            if (command == "LOCK") {
-                Log.d(TAG, "🔒 Command: LOCK -> Activating Overlay")
-                startLockActivity()
-            } else if (command == "UNLOCK") {
-                Log.d(TAG, "🔓 Command: UNLOCK -> Removing Overlay")
-                unlockDevice()
-            } else {
-                Log.d(TAG, "⚠️ Unknown or missing command: $command")
+            when (command) {
+                "LOCK" -> {
+                    Log.d(TAG, "🔒 Command: LOCK -> Activating Overlay")
+                    LockManager.lockDevice(applicationContext)
+                }
+                "UNLOCK" -> {
+                    Log.d(TAG, "🔓 Command: UNLOCK -> Removing Overlay")
+                    LockManager.unlockDevice(applicationContext)
+                }
+                "SETWALLPAPER" -> {
+                    Log.d(TAG, "🖼️ Command: SETWALLPAPER -> Setting Warning Wallpaper")
+                    WallpaperUtils.setWarningWallpaper(applicationContext)
+                }
+                "REMOVEWALLPAPER" -> {
+                    Log.d(TAG, "🖼️ Command: REMOVEWALLPAPER -> Resetting Wallpaper")
+                    WallpaperUtils.resetWallpaper(applicationContext)
+                }
+                "PLAYAUDIO" -> {
+                    Log.d(TAG, "🔊 Command: PLAYAUDIO -> Playing alert sound")
+                    AudioPlayer.playAudio(applicationContext)
+                }
+                "GETLOCATION" -> {
+                    Log.d(TAG, "📍 Command: GETLOCATION -> Requesting Location Update")
+                    val customerId = remoteMessage.data["customerId"]
+                    if (customerId.isNullOrEmpty()) {
+                        Log.e(TAG, "⚠️ Customer ID missing in payload, getting location might fail")
+                    }
+                    // Use LocationUtils for location logic
+                    LocationUtils.sendLocationDetails(applicationContext, customerId)
+                }
+                "SIMDETAILS" -> {
+                    Log.d(TAG, "📱 Command: SIMDETAILS -> Requesting SIM Info")
+                    // Use NetworkManager for SIM logic
+                    NetworkManager.sendSimDetails(applicationContext)
+                }
+
+                else -> {
+                    Log.d(TAG, "⚠️ Unknown or missing command: $command")
+                }
             }
+            
         } else {
             Log.d(TAG, "║ No data payload")
             Log.d(TAG, "╚════════════════════════════════════════════════════════")
         }
     }
-
-    private fun startLockActivity() {
-        try {
-            Log.d(TAG, "→ startLockActivity() called")
-            val intent = Intent(this, LockActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
-            Log.d(TAG, "→ Starting LockActivity with intent: $intent")
-            startActivity(intent)
-            Log.d(TAG, "✅ LockActivity started successfully")
-        } catch (e: Exception) {
-            Log.e(TAG, "❌ ERROR starting LockActivity", e)
-            Log.e(TAG, "  Error message: ${e.message}")
-            Log.e(TAG, "  Error type: ${e.javaClass.simpleName}")
-        }
-    }
-
-    private fun unlockDevice() {
-        Log.d(TAG, "→ unlockDevice() called")
-        try {
-            val intent = Intent(LockActivity.ACTION_UNLOCK)
-            intent.setPackage(packageName) // Explicitly target this app
-            Log.d(TAG, "→ Sending broadcast: ${intent.action} to package: $packageName")
-            sendBroadcast(intent)
-            Log.d(TAG, "✅ Unlock broadcast sent")
-        } catch (e: Exception) {
-            Log.e(TAG, "❌ Error sending unlock broadcast", e)
-        }
-    }
-
+    
     override fun onNewToken(token: String) {
         Log.d(TAG, "Refreshed token: $token")
         // If you want to send messages to this application instance or

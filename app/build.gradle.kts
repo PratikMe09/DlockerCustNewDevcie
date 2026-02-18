@@ -73,6 +73,7 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.messaging)
+    implementation("com.google.android.gms:play-services-location:21.0.1")
     
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
