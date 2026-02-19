@@ -8,11 +8,17 @@ import com.d.locker.lock.activities.LockActivity
 object LockManager {
     private const val TAG = "LockManager"
 
-    fun lockDevice(context: Context) {
+    fun lockDevice(context: Context, retailerCompanyName: String? = null, retailerFullName: String? = null, retailerMobile: String? = null) {
         try {
             Log.d(TAG, "→ lockDevice() called")
             val intent = Intent(context, LockActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            
+            // Pass retailer details if available
+            retailerCompanyName?.let { intent.putExtra("retailer_company_name", it) }
+            retailerFullName?.let { intent.putExtra("retailer_full_name", it) }
+            retailerMobile?.let { intent.putExtra("retailer_mobile", it) }
+            
             Log.d(TAG, "→ Starting LockActivity with intent: $intent")
             context.startActivity(intent)
             Log.d(TAG, "✅ LockActivity started successfully")

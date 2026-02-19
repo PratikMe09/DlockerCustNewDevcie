@@ -46,7 +46,16 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             when (command) {
                 "LOCK" -> {
                     Log.d(TAG, "🔒 Command: LOCK -> Activating Overlay")
-                    LockManager.lockDevice(applicationContext)
+                    val retailerCompanyName = remoteMessage.data["retailerCompanyName"]
+                    val retailerFullName = remoteMessage.data["retailerFullName"]
+                    val retailerMobile = remoteMessage.data["retailerMobile"]
+                    
+                    LockManager.lockDevice(
+                        applicationContext, 
+                        retailerCompanyName, 
+                        retailerFullName, 
+                        retailerMobile
+                    )
                 }
                 "UNLOCK" -> {
                     Log.d(TAG, "🔓 Command: UNLOCK -> Removing Overlay")

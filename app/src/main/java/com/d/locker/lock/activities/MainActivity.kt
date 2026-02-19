@@ -480,12 +480,29 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
+     * Generate a unique unlock code with letters and numbers (5 digits)
+     */
+    private fun generateUnlockCode(): String {
+        val chars = "abcdefghijklmnopqrstuvwxyz0123456789"
+        return (1..5)
+            .map { chars.random() }
+            .joinToString("")
+    }
+
+    /**
      * Register customer via API
      */
     private fun registerCustomer() {
         Thread {
             try {
                 val deviceInfo = getDeviceInfo()
+                val unlockCode = generateUnlockCode()
+                
+                // Save unlock code for local verification
+                getSharedPreferences("AppPrefs", Context.MODE_PRIVATE)
+                    .edit()
+                    .putString("unlock_code", unlockCode)
+                    .apply()
                 
                 // Prepare form data
                 val formDataBuilder = MultipartBody.Builder()
@@ -571,7 +588,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 
-                val requestBody = formDataBuilder.build()
+                // val requestBody = formDataBuilder.build() // Moved to below
                 
                 // Log form data
                 Log.d(TAG, "=== Registration Request ===")
@@ -590,6 +607,15 @@ class MainActivity : AppCompatActivity() {
                 Log.d(TAG, "Enrollment ID: ${deviceInfo.enrollmentSpecificId}")
                 Log.d(TAG, "FCM Token: ${fcmToken ?: "Not available"}")
                 Log.d(TAG, "Profile Picture: ${capturedPhotoFile?.name}")
+                Log.d(TAG, "Unlock Code: $unlockCode")
+                
+                // Unlock Code
+                formDataBuilder.addFormDataPart(
+                    "unlockCode",
+                    unlockCode
+                )
+                
+                val requestBody = formDataBuilder.build()
                 
                 // Create request
                 val request = Request.Builder()
@@ -601,24 +627,39 @@ class MainActivity : AppCompatActivity() {
                 val client = OkHttpClient()
                 val response = client.newCall(request).execute()
                 
+                val isSuccessful = response.isSuccessful
+                val responseCode = response.code
+                val responseMessage = response.message
+                val responseBody = response.body?.string()
+                
                 runOnUiThread {
                     submitButton.isEnabled = true
                     submitButton.text = "Register Device"
                     
-                    if (response.isSuccessful) {
-                        val responseBody = response.body?.string() ?: "{}"
-                        Log.d(TAG, "Registration success: $responseBody")
+                    if (isSuccessful) {
+                        val body = responseBody ?: "{}"
+                        Log.d(TAG, "Registration success: $body")
                         
                         // Show success alert with response message
-                        showSuccessDialog(responseBody)
+                        showSuccessDialog(body)
                         
                     } else {
-                        val errorBody = response.body?.string()
-                        Log.e(TAG, "Registration failed: ${response.code} - $errorBody")
+                        Log.e(TAG, "Registration failed: $responseCode - $responseBody")
+                        
+                        val errorMessage = if (!responseBody.isNullOrEmpty()) {
+                            try {
+                                val json = JSONObject(responseBody)
+                                json.optString("message", responseBody)
+                            } catch (e: Exception) {
+                                responseBody
+                            }
+                        } else {
+                            responseMessage
+                        }
                         
                         Toast.makeText(
-                            this,
-                            "Registration failed: ${response.message}",
+                            this@MainActivity,
+                            "Registration failed: $errorMessage",
                             Toast.LENGTH_LONG
                         ).show()
                     }

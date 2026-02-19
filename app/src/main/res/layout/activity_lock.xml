@@ -16,6 +16,15 @@
         android:orientation="vertical"
         android:padding="32dp">
 
+        <!-- Logo -->
+        <ImageView
+            android:id="@+id/lock_logo"
+            android:layout_width="200dp"
+            android:layout_height="160dp"
+            android:src="@drawable/my_logo"
+            android:layout_marginBottom="10dp"
+            android:contentDescription="Logo" />
+
         <!-- TITLE -->
         <TextView
             android:id="@+id/lock_title"
@@ -75,9 +84,9 @@
                 android:layout_height="wrap_content"
                 android:text="Company: "
                 android:textColor="#000000"
-                android:textSize="16sp"
+                android:textSize="14sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="8dp" />
+                android:layout_marginBottom="4dp" />
 
             <TextView
                 android:id="@+id/retailer_full_name"
@@ -85,8 +94,8 @@
                 android:layout_height="wrap_content"
                 android:text="Name: "
                 android:textColor="#000000"
-                android:textSize="15sp"
-                android:layout_marginBottom="8dp" />
+                android:textSize="14sp"
+                android:layout_marginBottom="4dp" />
 
             <TextView
                 android:id="@+id/retailer_mobile"
@@ -94,57 +103,57 @@
                 android:layout_height="wrap_content"
                 android:text="Mobile: "
                 android:textColor="#000000"
-                android:textSize="15sp" />
+                android:textSize="14sp" />
 
         </LinearLayout>
 
-        <!-- PIN Input Field (Visible only for admin disable) -->
+        <!-- Unlock Input Field -->
         <EditText
             android:id="@+id/unlock_pin"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="50dp"
             android:layout_marginBottom="12dp"
-            android:background="#F0F0F0"
-            android:hint="Enter 6-digit PIN"
+            android:background="@android:drawable/edit_text"
+            android:hint="Enter 5-digit Unlock Code"
             android:textColorHint="#999999"
-            android:inputType="numberPassword"
-            android:maxLength="6"
-            android:padding="16dp"
+            android:inputType="textVisiblePassword"
+            android:maxLength="5"
+            android:padding="12dp"
             android:textColor="#000000"
-            android:textSize="24sp"
+            android:textSize="18sp"
             android:gravity="center"
             android:clickable="true"
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:cursorVisible="true"
-            android:visibility="gone" />
+            android:visibility="visible" />
 
-        <!-- Error Message (Visible only for admin disable) -->
+        <!-- Error Message -->
         <TextView
             android:id="@+id/error_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:text="❌ Error message"
+            android:text="❌ Incorrect Code"
             android:textColor="#FF5252"
             android:textSize="14sp"
             android:gravity="center"
             android:visibility="gone"
-            android:padding="8dp" />
+            android:padding="4dp" />
 
-        <!-- Unlock Button (Visible only for admin disable) -->
+        <!-- Unlock Button -->
         <Button
             android:id="@+id/unlock_btn"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="50dp"
             android:backgroundTint="#2196F3"
-            android:text="🔓 SUBMIT"
+            android:text="UNLOCK DEVICE"
             android:textColor="#FFFFFF"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:textStyle="bold"
             android:clickable="true"
             android:focusable="true"
-            android:visibility="gone" />
+            android:visibility="visible" />
 
     </LinearLayout>
 
