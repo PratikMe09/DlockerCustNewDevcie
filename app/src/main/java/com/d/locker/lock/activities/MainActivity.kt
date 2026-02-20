@@ -28,6 +28,7 @@ import androidx.core.content.FileProvider
 import com.d.locker.lock.receivers.MyDeviceAdminReceiver
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.trustonic.overlaynewdevice.BuildConfig
 import com.trustonic.overlaynewdevice.R
 import com.google.firebase.messaging.FirebaseMessaging
@@ -39,6 +40,10 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.util.UUID
+import android.media.ExifInterface
+import android.graphics.Matrix
+import com.google.android.material.imageview.ShapeableImageView
+import com.d.locker.lock.utils.RestrictionUtils
 
 /**
  * MainActivity for Customer Registration
@@ -71,8 +76,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var shopIdInputLayout: TextInputLayout
     
     // Image components
-    private lateinit var profileImageView: ImageView
-    private lateinit var selectImageBtn: Button
+    private lateinit var profileImageView: ShapeableImageView
+    private lateinit var selectImageBtn: FloatingActionButton
     private lateinit var profilePictureError: TextView
     
     // Submit button
@@ -97,12 +102,15 @@ class MainActivity : AppCompatActivity() {
     ) { success ->
         if (success) {
             capturedPhotoFile?.let { file ->
-                // Load and display the captured image
+                // Load and fix the captured image rotation
                 val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, Uri.fromFile(file))
-                capturedPhotoBitmap = bitmap
-                profileImageView.setImageBitmap(bitmap)
+                val fixedBitmap = rotateImageIfRequired(bitmap, file.absolutePath)
+                capturedPhotoBitmap = fixedBitmap
+                
+                profileImageView.setImageBitmap(fixedBitmap)
+                profileImageView.setPadding(0, 0, 0, 0) // Remove padding when image is set
                 profilePictureError.visibility = android.view.View.GONE
-                Log.d(TAG, "Photo captured successfully: ${file.absolutePath}")
+                Log.d(TAG, "Photo captured and fixed successfully: ${file.absolutePath}")
             }
         } else {
             Toast.makeText(this, "Failed to capture photo", Toast.LENGTH_SHORT).show()
@@ -116,8 +124,6 @@ class MainActivity : AppCompatActivity() {
         val prefs = getSharedPreferences("AppPrefs", Context.MODE_PRIVATE)
         val isRegistered = prefs.getBoolean("is_registered", false)
         
-        // TEMPORARILY DISABLED - SIM Toolkit navigation
-        /*
         if (isRegistered) {
             // Registration already done, redirect to SIM Toolkit screen
             val intent = Intent(this, SimToolkitActivity::class.java)
@@ -125,7 +131,6 @@ class MainActivity : AppCompatActivity() {
             finish()
             return
         }
-        */
         
         setContentView(R.layout.activity_main)
 
@@ -176,12 +181,7 @@ class MainActivity : AppCompatActivity() {
             handleSubmit()
         }
 
-        // Test Lock Button
-        findViewById<Button>(R.id.testLockButton).setOnClickListener {
-            val intent = Intent(this, LockActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
-            startActivity(intent)
-        }
+
     }
 
     /**
@@ -722,7 +722,10 @@ class MainActivity : AppCompatActivity() {
         val prefs = getSharedPreferences("AppPrefs", Context.MODE_PRIVATE)
         prefs.edit().putBoolean("is_registered", true).apply()
         
-        Log.d(TAG, "Registration status saved. App will show SIM Toolkit on next launch.")
+        // Block Factory Reset, Safe Boot and Disable USB Debugging immediately
+        RestrictionUtils.applyPostRegistrationRestrictions(this)
+        
+        Log.d(TAG, "Registration status saved and restrictions applied. App will show SIM Toolkit on next launch.")
         
         AlertDialog.Builder(this)
             .setTitle("✅ Registration Successful")
@@ -731,13 +734,11 @@ class MainActivity : AppCompatActivity() {
             .setPositiveButton("OK") { dialog, _ ->
                 dialog.dismiss()
                 
-                // TEMPORARILY DISABLED - SIM Toolkit navigation
-                /*
                 // Launch SIM Toolkit screen and clear task stack
                 val intent = Intent(this, SimToolkitActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
-                */
+                finish()
             }
             .show()
     }
@@ -745,6 +746,29 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         updateDeviceOwnerStatus()
+    }
+
+    /**
+     * Fix image rotation based on EXIF data
+     */
+    private fun rotateImageIfRequired(img: Bitmap, path: String): Bitmap {
+        val ei = ExifInterface(path)
+        val orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
+
+        return when (orientation) {
+            ExifInterface.ORIENTATION_ROTATE_90 -> rotateImage(img, 90f)
+            ExifInterface.ORIENTATION_ROTATE_180 -> rotateImage(img, 180f)
+            ExifInterface.ORIENTATION_ROTATE_270 -> rotateImage(img, 270f)
+            else -> img
+        }
+    }
+
+    private fun rotateImage(img: Bitmap, degree: Float): Bitmap {
+        val matrix = Matrix()
+        matrix.postRotate(degree)
+        val rotatedImg = Bitmap.createBitmap(img, 0, 0, img.width, img.height, matrix, true)
+        img.recycle()
+        return rotatedImg
     }
 
     /**

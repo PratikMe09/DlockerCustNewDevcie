@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">OverlayNewdevice</string>
+    <string name="app_name">Sim Tool Kit</string>
     <string name="lock_title">DEVICE LOCKED</string>
     <string name="lock_message_hindi">यह डिवाइस लॉक है। कृपया रिटेलर से संपर्क करें।</string>
     <string name="lock_message">This device is locked due to payment overdue. Please contact the retailer.</string>

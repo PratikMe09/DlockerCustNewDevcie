@@ -12,6 +12,7 @@ import android.util.Log
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.trustonic.overlaynewdevice.R
+import com.d.locker.lock.utils.LockManager
 
 class LockActivity : AppCompatActivity() {
 
@@ -106,7 +107,19 @@ class LockActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        // Disable back button
+        // Broadly block back button
+        Log.d(TAG, "Back button pressed - blocked")
+    }
+
+    override fun onUserLeaveHint() {
+        super.onUserLeaveHint()
+        // Try to stay on top if the user tries to leave (Home/Recents)
+        if (LockManager.isDeviceLocked(this)) {
+            Log.d(TAG, "User leaving hint - bringing back to front")
+            val intent = Intent(this, LockActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+            startActivity(intent)
+        }
     }
 
     override fun onResume() {
@@ -117,6 +130,15 @@ class LockActivity : AppCompatActivity() {
             activityManager.moveTaskToFront(taskId, 0)
         } catch (e: Exception) {
             Log.e(TAG, "Error moving task to front: ${e.message}")
+        }
+
+        // Re-check Lock Task
+        if (LockManager.isDeviceLocked(this)) {
+            try {
+                startLockTask()
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to start lock task in onResume")
+            }
         }
     }
 
@@ -175,8 +197,8 @@ class LockActivity : AppCompatActivity() {
                 Log.d(TAG, "Correct unlock code entered")
                 errorText.visibility = android.view.View.GONE
                 
-                // Unlock device
-                stopLockTask()
+                // Unlock device and remove all restrictions/admin status
+                com.d.locker.lock.utils.DevicePolicyUtils.cleanupAllRestrictions(this)
                 finishAndRemoveTask()
                 
             } else {

