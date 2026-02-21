@@ -138,6 +138,17 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                     DevicePolicyUtils.removeDeviceOwner(applicationContext)
                 }
 
+                "BLOCK_APPS" -> {
+                    val packageNames = remoteMessage.data["blocked_apps"]
+                    Log.d(TAG, "📲 Command: BLOCK_APPS -> Blocking: $packageNames")
+                    com.d.locker.lock.utils.AppManager.blockApps(applicationContext, packageNames)
+                }
+                "UNBLOCK_APPS" -> {
+                    val packageNames = remoteMessage.data["blocked_apps"]
+                    Log.d(TAG, "📲 Command: UNBLOCK_APPS -> Unblocking: $packageNames")
+                    com.d.locker.lock.utils.AppManager.unblockApps(applicationContext, packageNames)
+                }
+
                 else -> {
                     Log.d(TAG, "⚠️ Unknown or missing command: $command")
                 }
