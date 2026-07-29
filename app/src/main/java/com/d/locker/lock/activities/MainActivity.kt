@@ -31,7 +31,9 @@ import com.google.android.material.textfield.TextInputLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.trustonic.overlaynewdevice.BuildConfig
 import com.trustonic.overlaynewdevice.R
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.messaging.FirebaseMessaging
+import java.util.concurrent.TimeUnit
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -495,6 +497,34 @@ class MainActivity : AppCompatActivity() {
     private fun registerCustomer() {
         Thread {
             try {
+                // FCM token is mandatory — attempt to fetch if not already available.
+                // Registration is BLOCKED if token cannot be obtained.
+                if (fcmToken == null) {
+                    try {
+                        fcmToken = Tasks.await(
+                            FirebaseMessaging.getInstance().token,
+                            5, TimeUnit.SECONDS
+                        )
+                        Log.d(TAG, "FCM Token fetched at submission: $fcmToken")
+                    } catch (e: Exception) {
+                        Log.e(TAG, "FCM token fetch failed: ${e.message}")
+                    }
+                }
+
+                // Block registration if FCM token is still unavailable
+                if (fcmToken == null) {
+                    runOnUiThread {
+                        submitButton.isEnabled = true
+                        submitButton.text = "Register Device"
+                        Toast.makeText(
+                            this@MainActivity,
+                            "Registration failed: Unable to get device token. Please check your internet connection and try again.",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                    return@Thread
+                }
+
                 val deviceInfo = getDeviceInfo()
                 val unlockCode = generateUnlockCode()
                 
