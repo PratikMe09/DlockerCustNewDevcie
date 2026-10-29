@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "549791011938",
+    "project_id": "dlocker-83aa7",
+    "storage_bucket": "dlocker-83aa7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:549791011938:android:5b48ce050f00d240cc6d3b",
+        "android_client_info": {
+          "package_name": "com.dlocker.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZtsYaji3hxIRn9v2S82fwj8hKoPour-w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:549791011938:android:fd49f4d479b3ea4acc6d3b",
+        "android_client_info": {
+          "package_name": "com.trustonic.overlaynewdevice"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZtsYaji3hxIRn9v2S82fwj8hKoPour-w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

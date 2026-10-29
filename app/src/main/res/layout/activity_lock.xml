@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/overlay_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:clickable="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="32dp">
+
+        <!-- Logo -->
+        <ImageView
+            android:id="@+id/lock_logo"
+            android:layout_width="200dp"
+            android:layout_height="160dp"
+            android:src="@drawable/my_logo"
+            android:layout_marginBottom="10dp"
+            android:contentDescription="Logo" />
+
+        <!-- TITLE -->
+        <TextView
+            android:id="@+id/lock_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/lock_title"
+            android:textColor="#000000"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp" />
+
+        <!-- HINDI MESSAGE (Visible by default) -->
+        <TextView
+            android:id="@+id/hindi_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/lock_message_hindi"
+            android:textColor="#333333"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:layout_marginBottom="12dp" />
+
+        <!-- ENGLISH MESSAGE (Visible by default) -->
+        <TextView
+            android:id="@+id/english_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/lock_message"
+            android:textColor="#333333"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:layout_marginBottom="24dp" />
+
+        <!-- RETAILER INFORMATION BOX -->
+        <LinearLayout
+            android:id="@+id/retailer_info_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#EEEEEE"
+            android:padding="16dp"
+            android:layout_marginBottom="24dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Retailer Information"
+                android:textColor="#1976D2"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp" />
+
+            <TextView
+                android:id="@+id/retailer_company_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Company: "
+                android:textColor="#000000"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:id="@+id/retailer_full_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Name: "
+                android:textColor="#000000"
+                android:textSize="14sp"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:id="@+id/retailer_mobile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Mobile: "
+                android:textColor="#000000"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+        <!-- Unlock Input Field -->
+        <EditText
+            android:id="@+id/unlock_pin"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginBottom="12dp"
+            android:background="@android:drawable/edit_text"
+            android:hint="Enter 5-digit Unlock Code"
+            android:textColorHint="#999999"
+            android:inputType="textVisiblePassword"
+            android:maxLength="5"
+            android:padding="12dp"
+            android:textColor="#000000"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:cursorVisible="true"
+            android:visibility="visible" />
+
+        <!-- Error Message -->
+        <TextView
+            android:id="@+id/error_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="❌ Incorrect Code"
+            android:textColor="#FF5252"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:visibility="gone"
+            android:padding="4dp" />
+
+        <!-- Unlock Button -->
+        <Button
+            android:id="@+id/unlock_btn"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:backgroundTint="#2196F3"
+            android:text="UNLOCK DEVICE"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:clickable="true"
+            android:focusable="true"
+            android:visibility="visible" />
+
+    </LinearLayout>
+
+    <!-- WARNING -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="24dp"
+        android:text="@string/warning_text"
+        android:textColor="#FF0000"
+        android:textSize="14sp"
+        android:padding="8dp" />
+
+</RelativeLayout>
